@@ -13,7 +13,8 @@
 #include <set>
 
 #include <cinttypes>
-#include "ElasticSketch.h"
+#include "murmur3.h"
+#include "cm.h"
 
 using namespace std;
 /*
@@ -79,18 +80,13 @@ typedef struct tcp_header
     u_short surgentPointer;
 } Tcp_header;
 
-struct fivetuple
-{
-    unsigned int saddr; // 源地址(Source address)
-    unsigned int daddr; // 目的地址(Destination address)
-    unsigned short sport;
-    unsigned short dport;
-    unsigned char proto; // 协议(Protocol)
-} __attribute__((packed, aligned(1)));
-
 int pkt_cnt = 10000;
+int pkt_total = 10000;
 long long time_total_ns = 0;
-
+long long cycle_total = 0;
+fivetuple *ft = (fivetuple *)malloc(sizeof(fivetuple));
+// definetion template + auguments_list
+CountMin cm = CountMin(2,10000);
 static inline uint64_t rdtsc()
 {
     unsigned int lo, hi;
@@ -107,35 +103,12 @@ static inline uint64_t get_time()
     return ns;
 }
 
-// void *runner(void *param)
-// {
-//     time_t temp;
-//     while (1)
-//     {
-//         time(&temp);
-//         if (temp - begin_time > 0)
-//         {
-//             printf("---------------------------------------------\n");
-//             printf("当前总网速：%.2f kb/s \n", count_of_bytes / 1024.0);
-//             printf("TCP协议占用网速：%.2f kb/s \n", tcp_count / 1024.0);
-//             printf("UDP协议占用网速：%.2f kb/s \n", udp_count / 1024.0);
-//             printf("---------------------------------------------\n");
-//             count_of_bytes = 0;
-//             tcp_count = 0;
-//             udp_count = 0;
-//             begin_time = temp;
-//         }
-//     }
-// }
-fivetuple *ft = (fivetuple *)malloc(sizeof(fivetuple));
-
 void got_packet(u_char *argv, const struct pcap_pkthdr *header, const u_char *packet)
 {
 
     int start_cycle = rdtsc();
     uint64_t time_start = get_time();
     Ethernet *ethernet = (Ethernet *)(packet);
-
     Ip_header *ip = (Ip_header *)(packet + sizeof(Ethernet));
     udp_header *udp = (udp_header *)(packet + sizeof(Ip_header));
     // 需要malloc,否则会有segment fault
@@ -147,22 +120,23 @@ void got_packet(u_char *argv, const struct pcap_pkthdr *header, const u_char *pa
     ft->dport = udp->dport;
     ft->proto = ip->proto;
 
-    // Nitrosketch ns = Nitrosketch(65536, 0.5);
-    // ns.insert(ft, sizeof(fivetuple));
-    ElasticSketch<8, 10000> es;
-    es.insert(ft);
+    cm.update(ft,1);
+
     uint64_t time_end = get_time();
     int end_cycle = rdtsc();
 
     // printf("%d cycles/packet\n", end_cycle - start_cycle);
     time_total_ns += (time_end - time_start);
+    cycle_total += (end_cycle - start_cycle);
     if (pkt_cnt)
         pkt_cnt--;
     else
     {
         printf("%lld\n", time_total_ns);
         long long res = 10000000000000 / time_total_ns;
+        long long cycle_res = cycle_total / pkt_total;
         printf("throughoutput:%lld \n", res);
+        printf("avg cycles/packet:%lld \n", cycle_res);
         exit(0);
     }
 

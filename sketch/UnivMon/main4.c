@@ -89,7 +89,9 @@ struct fivetuple
 } __attribute__((packed, aligned(1)));
 
 int pkt_cnt = 10000;
+int pkt_total = 10000;
 long long time_total_ns = 0;
+long long cycle_total = 0;
 
 static inline uint64_t rdtsc()
 {
@@ -128,7 +130,7 @@ static inline uint64_t get_time()
 //     }
 // }
 fivetuple *ft = (fivetuple *)malloc(sizeof(fivetuple));
-
+UnivMon um = UnivMon(65536);
 void got_packet(u_char *argv, const struct pcap_pkthdr *header, const u_char *packet)
 {
 
@@ -149,20 +151,22 @@ void got_packet(u_char *argv, const struct pcap_pkthdr *header, const u_char *pa
 
     // Nitrosketch ns = Nitrosketch(65536, 0.5);
     // ns.insert(ft, sizeof(fivetuple));
-    UnivMon um = UnivMon(65536);
+
     um.insert(ft, sizeof(fivetuple));
     uint64_t time_end = get_time();
     int end_cycle = rdtsc();
 
-    // printf("%d cycles/packet\n", end_cycle - start_cycle);
     time_total_ns += (time_end - time_start);
+    cycle_total += (end_cycle - start_cycle);
     if (pkt_cnt)
         pkt_cnt--;
     else
     {
         printf("%lld\n", time_total_ns);
         long long res = 10000000000000 / time_total_ns;
+        long long cycle_res = cycle_total / pkt_total;
         printf("throughoutput:%lld \n", res);
+        printf("avg cycles/packet:%lld \n", cycle_res);
         exit(0);
     }
 

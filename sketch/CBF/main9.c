@@ -14,7 +14,7 @@
 
 #include <cinttypes>
 #include "murmur3.h"
-#include "flowradar.h"
+#include "cbf.h"
 
 using namespace std;
 /*
@@ -85,7 +85,8 @@ int pkt_total = 10000;
 long long time_total_ns = 0;
 long long cycle_total = 0;
 fivetuple *ft = (fivetuple *)malloc(sizeof(fivetuple));
-FlowRadar fr = FlowRadar(100000, 3, 3, 0.4);
+// definetion template + auguments_list
+CountBloomFilter cdf = CountBloomFilter(65536, 4);
 static inline uint64_t rdtsc()
 {
     unsigned int lo, hi;
@@ -119,11 +120,12 @@ void got_packet(u_char *argv, const struct pcap_pkthdr *header, const u_char *pa
     ft->dport = udp->dport;
     ft->proto = ip->proto;
 
-    fr.update(ft);
+    cdf.insert(ft);
 
     uint64_t time_end = get_time();
     int end_cycle = rdtsc();
 
+    // printf("%d cycles/packet\n", end_cycle - start_cycle);
     time_total_ns += (time_end - time_start);
     cycle_total += (end_cycle - start_cycle);
     if (pkt_cnt)

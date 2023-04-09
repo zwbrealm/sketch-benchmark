@@ -1,8 +1,0 @@
-../data/CAIDA/trace1.dat result.txt
-6
-0
-1
-2 ../data/CAIDA/trace2.dat
-3
-4
-5
