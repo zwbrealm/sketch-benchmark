@@ -85,7 +85,7 @@ int pkt_total = 10000;
 long long time_total_ns = 0;
 long long cycle_total = 0;
 fivetuple *ft = (fivetuple *)malloc(sizeof(fivetuple));
-FlowRadar fr = FlowRadar(100000, 3, 3, 0.4);
+FlowRadar fr = FlowRadar(10000000, 4, 4, 0.4);
 static inline uint64_t rdtsc()
 {
     unsigned int lo, hi;

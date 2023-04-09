@@ -130,7 +130,8 @@ static inline uint64_t get_time()
 //     }
 // }
 fivetuple *ft = (fivetuple *)malloc(sizeof(fivetuple));
-ElasticSketch<8, 10000> es;
+ElasticSketch<8, 10000000> es;
+
 void got_packet(u_char *argv, const struct pcap_pkthdr *header, const u_char *packet)
 {
 

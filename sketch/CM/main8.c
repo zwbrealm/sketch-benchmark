@@ -86,7 +86,7 @@ long long time_total_ns = 0;
 long long cycle_total = 0;
 fivetuple *ft = (fivetuple *)malloc(sizeof(fivetuple));
 // definetion template + auguments_list
-CountMin cm = CountMin(2,10000);
+CountMin cm = CountMin(2, 10000000);
 static inline uint64_t rdtsc()
 {
     unsigned int lo, hi;
@@ -120,7 +120,7 @@ void got_packet(u_char *argv, const struct pcap_pkthdr *header, const u_char *pa
     ft->dport = udp->dport;
     ft->proto = ip->proto;
 
-    cm.update(ft,1);
+    cm.update(ft, 1);
 
     uint64_t time_end = get_time();
     int end_cycle = rdtsc();

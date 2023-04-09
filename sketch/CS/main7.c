@@ -86,7 +86,7 @@ long long time_total_ns = 0;
 long long cycle_total = 0;
 fivetuple *ft = (fivetuple *)malloc(sizeof(fivetuple));
 // definetion template + auguments_list
-CountSketch<4, 4> cs = CountSketch<4, 4>(10000);
+CountSketch<4, 4> cs = CountSketch<4, 4>(10000000);
 static inline uint64_t rdtsc()
 {
     unsigned int lo, hi;

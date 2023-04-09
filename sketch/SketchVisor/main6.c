@@ -85,7 +85,7 @@ int pkt_total = 10000;
 long long time_total_ns = 0;
 long long cycle_total = 0;
 fivetuple *ft = (fivetuple *)malloc(sizeof(fivetuple));
-SketchVisor skv = SketchVisor(3, 100, 10000);
+SketchVisor skv = SketchVisor(3, 100, 10000000);
 static inline uint64_t rdtsc()
 {
     unsigned int lo, hi;

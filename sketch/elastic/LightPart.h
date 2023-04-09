@@ -1,7 +1,7 @@
 #ifndef _LIGHT_PART_H_
 #define _LIGHT_PART_H_
 
-#include "../../common/EMFSD.h"
+#include "../common/EMFSD.h"
 #include <iostream>
 
 #include "param.h"
