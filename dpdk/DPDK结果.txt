@@ -1,0 +1,66 @@
+dpdk
+
+### 40 
+
+nitro:
+
+avg throughoutput:4044887
+avg cpu/packet:444
+
+
+
+um:
+
+avg throughoutput:1949650
+avg cpu/packet:921
+
+
+
+es
+
+avg throughoutput:3789302
+avg cpu/packet:474
+
+
+
+fr
+
+avg throughoutput:2043432
+avg cpu/packet:878
+
+
+
+skv
+
+avg throughoutput:2779103
+avg cpu/packet:646
+
+
+
+cbf
+
+avg throughoutput:3161490
+avg cpu/packet:568
+
+
+
+cm
+
+avg throughoutput:3131846
+avg cpu/packet:573
+
+
+
+cs
+
+avg throughoutput:1953264
+avg cpu/packet:919
+
+
+
+
+
+
+
+
+

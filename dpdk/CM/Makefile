@@ -2,11 +2,11 @@
 # Copyright(c) 2010-2014 Intel Corporation
 
 # binary name
-APP = fr
+APP = cs
 
 # all source are stored in SRCS-y
-SRCS-y := main_fr.c
-# SRCS-y += cms.c
+SRCS-y := main_cs.c
+# SRCS-y += uthash.c
 
 # Build using pkg-config variables if possible
 ifeq ($(shell pkg-config --exists libdpdk && echo 0),0)
