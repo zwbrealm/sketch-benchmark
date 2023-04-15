@@ -512,8 +512,8 @@ int main(int argc, char *argv[])
 
                 printf("avg throughoutput:%ld\n", pkts_count * 1000000000 / (end_time - start_time));
                 printf("avg cpu/packet:%ld\n", (end_cycle - start_cycle) / pkts_count);
-                printf("%ld\n", (end_cycle - start_cycle));
-                if (pkts_count / 100000000 == 5)
+                // printf("%ld\n", (end_cycle - start_cycle));
+                if (pkts_count / 100000000 == 2)
                 {
                     for (uint16_t i = 0; i < num_recv; i++)
                     {

@@ -2,10 +2,10 @@
 # Copyright(c) 2010-2014 Intel Corporation
 
 # binary name
-APP = cs
+APP = cm2
 
 # all source are stored in SRCS-y
-SRCS-y := main_cs.c
+SRCS-y := main_cm.c
 # SRCS-y += uthash.c
 
 # Build using pkg-config variables if possible

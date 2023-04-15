@@ -434,23 +434,23 @@ int main(int argc, char *argv[])
 
             pkts_count++;
 
-            if (pkts_count % 100000000 == 0)
+            if (pkts_count % 120000000 == 0)
             {
                 uint64_t end_cycle = rdtsc();
                 uint64_t end_time = get_time();
 
                 printf("avg throughoutput:%ld\n", pkts_count * 1000000000 / (end_time - start_time));
                 printf("avg cpu/packet:%ld\n", (end_cycle - start_cycle) / pkts_count);
-                printf("%ld\n", (end_cycle - start_cycle));
-                if (pkts_count / 100000000 == 5)
+                // printf("%ld\n", (end_cycle - start_cycle));
+                // if (pkts_count / 120000000 == 2)
+                // {
+                for (uint16_t i = 0; i < num_recv; i++)
                 {
-                    for (uint16_t i = 0; i < num_recv; i++)
-                    {
-                        rte_pktmbuf_free(mbufs[i]);
-                    }
-                    free(ft);
-                    exit(0);
+                    rte_pktmbuf_free(mbufs[i]);
                 }
+                free(ft);
+                exit(0);
+                // }
             }
 
             // if(num > 10)
