@@ -427,7 +427,7 @@ static struct rte_eth_conf port_conf = {
 	.rx_adv_conf = {
 		.rss_conf = {
 			.rss_key = NULL,
-			.rss_hf = ETH_RSS_TCP,
+			.rss_hf = ETH_RSS_IP,
 		},
 	},
 	.txmode = {
@@ -2353,8 +2353,8 @@ lthread_rx(void *dummy)
 	rte_atomic16_inc(&rx_counter);
 	uint16_t cur_thread_id = rte_atomic16_read(&rx_counter);
 	uint32_t cur_cpu_id = sched_getcpu();
-	printf("cur_thread_id = %d\n", cur_thread_id);
-	printf("cur_cpu_id =    %d\n", cur_cpu_id);
+	// printf("cur_thread_id = %d\n", cur_thread_id);
+	// printf("cur_cpu_id =    %d\n", cur_cpu_id);
 
 	uint64_t time_start = get_time();
 	uint64_t cycles_start = rte_rdtsc();
@@ -2366,6 +2366,7 @@ lthread_rx(void *dummy)
 		 */
 		for (i = 0; i < rx_conf->n_rx_queue; ++i)
 		{
+
 			portid = rx_conf->rx_queue_list[i].port_id;
 			queueid = rx_conf->rx_queue_list[i].queue_id;
 
@@ -2376,6 +2377,7 @@ lthread_rx(void *dummy)
 
 			if (nb_rx != 0)
 			{
+
 				worker_id = (worker_id + 1) % rx_conf->n_ring;
 				old_len = len[worker_id];
 
@@ -2443,15 +2445,18 @@ lthread_rx(void *dummy)
 					// if (rte_atomic64_read(&pkt_cnt) > 10000000)
 					// printf("cycles:%d\n", cycles);
 					// printf("time_spend:%d\n", time_spend);
-					if (pkt_cnt > 800000)
+					if (pkt_cnt > 4000000)
 					{
 
 						uint64_t time_end = get_time();
 						uint64_t cycles_end = rte_rdtsc();
-						printf("avg_cycles:%d\n", (cycles_end - cycles_start) / pkt_cnt);
-						printf("throughoutput:%d\n", (1000000000 * pkt_cnt) / (time_end - time_start));
-						printf("cur_thread_id = %d\n;", cur_thread_id);
-						printf("cur_cpu_id = %d\n", cur_cpu_id);
+						if (cur_thread_id != 1)
+						{
+							printf("avg_cycles:%d\n", (cycles_end - cycles_start) / pkt_cnt);
+							printf("throughoutput:%d\n", (1000000000 * pkt_cnt) / (time_end - time_start));
+							printf("cur_thread_id = %d\n;", cur_thread_id);
+							printf("cur_cpu_id = %d\n", cur_cpu_id);
+						}
 
 						pkt_cnt = 0;
 						time_start = get_time();
