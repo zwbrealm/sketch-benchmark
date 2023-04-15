@@ -2299,12 +2299,11 @@ lthread_null(__rte_unused void *args)
 // 	return NULL;
 // }
 
-uint64_t pkt_cnt = 0;
-uint64_t cycles_total = 0;
-uint64_t times_total = 0;
-
 lthread_rx(void *dummy)
 {
+	uint64_t pkt_cnt = 0;
+	uint64_t cycles_total = 0;
+	uint64_t times_total = 0;
 	int ret;
 	uint16_t nb_rx;
 	int i;
@@ -2352,6 +2351,13 @@ lthread_rx(void *dummy)
 
 	rx_conf->conf.cpu_id = sched_getcpu();
 	rte_atomic16_inc(&rx_counter);
+	uint16_t cur_thread_id = rte_atomic16_read(&rx_counter);
+	uint32_t cur_cpu_id = sched_getcpu();
+	printf("cur_thread_id = %d\n", cur_thread_id);
+	printf("cur_cpu_id =    %d\n", cur_cpu_id);
+
+	uint64_t time_start = get_time();
+	uint64_t cycles_start = rte_rdtsc();
 	while (1)
 	{
 
@@ -2390,12 +2396,11 @@ lthread_rx(void *dummy)
 					uint8_t proto_id;
 					// printf("11111111111111\n");
 
-					uint64_t time_start, time_end;
+					// uint64_t time_start, time_end;
 					struct ipv4_5tuple *ft = (struct ipv4_5tuple *)malloc(sizeof(struct ipv4_5tuple));
 					// 获取五元组
 					// rte_eth_read_clock(0, &time_end);
-					time_start = get_time();
-					uint64_t cycles_start = rte_rdtsc();
+
 					struct rte_ipv4_hdr *ipv4_hdr = rte_pktmbuf_mtod_offset(pkts_burst[i], struct rte_ipv4_hdr *, sizeof(struct rte_ether_hdr));
 					sip = rte_be_to_cpu_32(ipv4_hdr->src_addr);
 					dip = rte_be_to_cpu_32(ipv4_hdr->dst_addr);
@@ -2424,27 +2429,33 @@ lthread_rx(void *dummy)
 					}
 
 					free(ft);
-					uint64_t cycles = rte_rdtsc() - cycles_start;
-					uint64_t time_spend = get_time() - time_start;
+					// uint64_t cycles = rte_rdtsc() - cycles_start;
+					// uint64_t time_spend = get_time() - time_start;
 					// printf("cycles: %ld\n", cycles);
 					// printf("ns: %ld\n", time_end);
 
 					// rte_atomic64_inc(&pkt_cnt);
 					// rte_atomic64_add(&times_total, time_spend);
 					// rte_atomic64_add(&cycles_total, cycles);
-					times_total += time_spend;
-					cycles_total += cycles;
 
 					// printf("ns: %ld\n", time_end - time_start);
 					// printf("%d\n", rte_atomic64_read(&pkt_cnt));
 					// if (rte_atomic64_read(&pkt_cnt) > 10000000)
-					printf("cycles:%d\n", cycles);
-					printf("time_spend:%d\n", time_spend);
-					if (pkt_cnt > 100000)
+					// printf("cycles:%d\n", cycles);
+					// printf("time_spend:%d\n", time_spend);
+					if (pkt_cnt > 800000)
 					{
-						printf("avg_cycles:%d\n", cycles_total / pkt_cnt);
-						printf("avg_time:%d\n", times_total / pkt_cnt);
-						exit(0);
+
+						uint64_t time_end = get_time();
+						uint64_t cycles_end = rte_rdtsc();
+						printf("avg_cycles:%d\n", (cycles_end - cycles_start) / pkt_cnt);
+						printf("throughoutput:%d\n", (1000000000 * pkt_cnt) / (time_end - time_start));
+						printf("cur_thread_id = %d\n;", cur_thread_id);
+						printf("cur_cpu_id = %d\n", cur_cpu_id);
+
+						pkt_cnt = 0;
+						time_start = get_time();
+						cycles_start = rte_rdtsc();
 					}
 				}
 
