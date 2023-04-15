@@ -41,7 +41,7 @@
 #include <rte_string_fns.h>
 #include <rte_pause.h>
 #include <rte_timer.h>
-
+#include <time.h>
 #include <cmdline_parse.h>
 #include <cmdline_parse_etheraddr.h>
 
@@ -52,7 +52,7 @@
 #define DO_RFC_1812_CHECKS
 
 /* Enable cpu-load stats 0-off, 1-on */
-#define APP_CPU_LOAD 1
+#define APP_CPU_LOAD 0
 
 #ifndef APP_LOOKUP_METHOD
 #define APP_LOOKUP_METHOD APP_LOOKUP_LPM
@@ -61,6 +61,107 @@
 #ifndef __GLIBC__ /* sched_getcpu() is glibc specific */
 #define sched_getcpu() rte_lcore_id()
 #endif
+
+#define M 4
+#define N 65536
+counters[M][N] = {0};
+
+uint64_t get_time()
+{
+	struct timespec time1 = {0, 0};
+	clock_gettime(CLOCK_THREAD_CPUTIME_ID, &time1);
+	uint64_t ns = time1.tv_sec * 1000000000 + time1.tv_nsec;
+
+	return ns;
+}
+
+static inline uint32_t rotl32(uint32_t x, int8_t r)
+{
+	return (x << r) | (x >> (32 - r));
+}
+
+static inline uint64_t rotl64(uint64_t x, int8_t r)
+{
+	return (x << r) | (x >> (64 - r));
+}
+
+#define ROTL32(x, y) rotl32(x, y)
+#define ROTL64(x, y) rotl64(x, y)
+
+#define getblock(p, i) (p[i])
+
+static inline uint32_t fmix32(uint32_t h)
+{
+	h ^= h >> 16;
+	h *= 0x85ebca6b;
+	h ^= h >> 13;
+	h *= 0xc2b2ae35;
+	h ^= h >> 16;
+
+	return h;
+}
+
+//-----------------------------------------------------------------------------
+
+uint32_t murmur3(const void *key, int len, uint32_t seed)
+{
+	const uint8_t *data = (const uint8_t *)key;
+	const int nblocks = len / 4;
+	int i;
+
+	uint32_t h1 = seed;
+
+	uint32_t c1 = 0xcc9e2d51;
+	uint32_t c2 = 0x1b873593;
+
+	//----------
+	// body
+
+	const uint32_t *blocks = (const uint32_t *)(data + nblocks * 4);
+
+	for (i = -nblocks; i; i++)
+	{
+		uint32_t k1 = getblock(blocks, i);
+
+		k1 *= c1;
+		k1 = ROTL32(k1, 15);
+		k1 *= c2;
+
+		h1 ^= k1;
+		h1 = ROTL32(h1, 13);
+		h1 = h1 * 5 + 0xe6546b64;
+	}
+
+	//----------
+	// tail
+
+	const uint8_t *tail = (const uint8_t *)(data + nblocks * 4);
+
+	uint32_t k1 = 0;
+
+	switch (len & 3)
+	{
+	case 3:
+		k1 ^= tail[2] << 16;
+	case 2:
+		k1 ^= tail[1] << 8;
+	case 1:
+		k1 ^= tail[0];
+		k1 *= c1;
+		k1 = ROTL32(k1, 15);
+		k1 *= c2;
+		h1 ^= k1;
+	};
+
+	//----------
+	// finalization
+
+	h1 ^= len;
+
+	h1 = fmix32(h1);
+
+	return h1;
+}
 
 static int
 check_ptype(int portid)
@@ -126,6 +227,16 @@ cb_parse_ptype(__rte_unused uint16_t port, __rte_unused uint16_t queue,
  *  When set to one, optimized forwarding path is enabled.
  *  Note that LPM optimisation path uses SSE4.1 instructions.
  */
+
+struct ipv4_5tuple
+{
+	uint32_t ip_dst;
+	uint32_t ip_src;
+	uint16_t port_dst;
+	uint16_t port_src;
+	uint8_t proto;
+} __rte_packed;
+
 #define ENABLE_MULTI_BUFFER_OPTIMIZE 1
 
 #if (APP_LOOKUP_METHOD == APP_LOOKUP_EXACT_MATCH)
@@ -330,15 +441,6 @@ static struct rte_mempool *pktmbuf_pool[NB_SOCKETS];
 
 #include <rte_hash_crc.h>
 #define DEFAULT_HASH_FUNC rte_hash_crc
-
-struct ipv4_5tuple
-{
-	uint32_t ip_dst;
-	uint32_t ip_src;
-	uint16_t port_dst;
-	uint16_t port_src;
-	uint8_t proto;
-} __rte_packed;
 
 union ipv4_5tuple_host
 {
@@ -1757,7 +1859,7 @@ process_burst(struct rte_mbuf *pkts_burst[MAX_PKT_BURST], int nb_rx,
 {
 
 	int j;
-
+	printf("aaaaaaaaaaaaaaaaaaaaaaaa\n");
 #if ((APP_LOOKUP_METHOD == APP_LOOKUP_LPM) && \
 	 (ENABLE_MULTI_BUFFER_OPTIMIZE == 1))
 	int32_t k;
@@ -2090,56 +2192,56 @@ lthread_null(__rte_unused void *args)
 	return NULL;
 }
 
-/* main processing loop */
-static void *
-lthread_tx_per_ring(void *dummy)
-{
-	int nb_rx;
-	uint16_t portid;
-	struct rte_ring *ring;
-	struct thread_tx_conf *tx_conf;
-	struct rte_mbuf *pkts_burst[MAX_PKT_BURST];
-	struct lthread_cond *ready;
+// /* main processing loop */
+// static void *
+// lthread_tx_per_ring(void *dummy)
+// {
+// 	int nb_rx;
+// 	uint16_t portid;
+// 	struct rte_ring *ring;
+// 	struct thread_tx_conf *tx_conf;
+// 	struct rte_mbuf *pkts_burst[MAX_PKT_BURST];
+// 	struct lthread_cond *ready;
 
-	tx_conf = (struct thread_tx_conf *)dummy;
-	ring = tx_conf->ring;
-	ready = *tx_conf->ready;
+// 	tx_conf = (struct thread_tx_conf *)dummy;
+// 	ring = tx_conf->ring;
+// 	ready = *tx_conf->ready;
 
-	lthread_set_data((void *)tx_conf);
+// 	lthread_set_data((void *)tx_conf);
 
-	/*
-	 * Move this lthread to lcore
-	 */
-	lthread_set_affinity(tx_conf->conf.lcore_id);
+// 	/*
+// 	 * Move this lthread to lcore
+// 	 */
+// 	lthread_set_affinity(tx_conf->conf.lcore_id);
 
-	RTE_LOG(INFO, L3FWD, "entering main tx loop on lcore %u\n", rte_lcore_id());
+// 	RTE_LOG(INFO, L3FWD, "entering main tx loop on lcore %u\n", rte_lcore_id());
 
-	nb_rx = 0;
-	rte_atomic16_inc(&tx_counter);
-	while (1)
-	{
+// 	nb_rx = 0;
+// 	rte_atomic16_inc(&tx_counter);
+// 	while (1)
+// 	{
 
-		/*
-		 * Read packet from ring
-		 */
-		SET_CPU_BUSY(tx_conf, CPU_POLL);
-		nb_rx = rte_ring_sc_dequeue_burst(ring, (void **)pkts_burst,
-										  MAX_PKT_BURST, NULL);
-		SET_CPU_IDLE(tx_conf, CPU_POLL);
+// 		/*
+// 		 * Read packet from ring
+// 		 */
+// 		SET_CPU_BUSY(tx_conf, CPU_POLL);
+// 		nb_rx = rte_ring_sc_dequeue_burst(ring, (void **)pkts_burst,
+// 										  MAX_PKT_BURST, NULL);
+// 		SET_CPU_IDLE(tx_conf, CPU_POLL);
 
-		if (nb_rx > 0)
-		{
-			SET_CPU_BUSY(tx_conf, CPU_PROCESS);
-			portid = pkts_burst[0]->port;
-			process_burst(pkts_burst, nb_rx, portid);
-			SET_CPU_IDLE(tx_conf, CPU_PROCESS);
-			lthread_yield();
-		}
-		else
-			lthread_cond_wait(ready, 0);
-	}
-	return NULL;
-}
+// 		if (nb_rx > 0)
+// 		{
+// 			SET_CPU_BUSY(tx_conf, CPU_PROCESS);
+// 			portid = pkts_burst[0]->port;
+// 			process_burst(pkts_burst, nb_rx, portid);
+// 			SET_CPU_IDLE(tx_conf, CPU_PROCESS);
+// 			lthread_yield();
+// 		}
+// 		else
+// 			lthread_cond_wait(ready, 0);
+// 	}
+// 	return NULL;
+// }
 
 /*
  * Main tx-lthreads spawner lthread.
@@ -2147,56 +2249,60 @@ lthread_tx_per_ring(void *dummy)
  * This lthread is used to spawn one new lthread per ring from producers.
  *
  */
-static void *
-lthread_tx(void *args)
-{
-	struct lthread *lt;
 
-	unsigned lcore_id;
-	uint16_t portid;
-	struct thread_tx_conf *tx_conf;
+// static void *
+// lthread_tx(void *args)
+// {
+// 	struct lthread *lt;
 
-	tx_conf = (struct thread_tx_conf *)args;
-	lthread_set_data((void *)tx_conf);
+// 	unsigned lcore_id;
+// 	uint16_t portid;
+// 	struct thread_tx_conf *tx_conf;
 
-	/*
-	 * Move this lthread to the selected lcore
-	 */
-	lthread_set_affinity(tx_conf->conf.lcore_id);
+// 	tx_conf = (struct thread_tx_conf *)args;
+// 	lthread_set_data((void *)tx_conf);
 
-	/*
-	 * Spawn tx readers (one per input ring)
-	 */
-	lthread_create(&lt, tx_conf->conf.lcore_id, lthread_tx_per_ring,
-				   (void *)tx_conf);
+// 	/*
+// 	 * Move this lthread to the selected lcore
+// 	 */
+// 	lthread_set_affinity(tx_conf->conf.lcore_id);
 
-	lcore_id = rte_lcore_id();
+// 	/*
+// 	 * Spawn tx readers (one per input ring)
+// 	 */
+// 	lthread_create(&lt, tx_conf->conf.lcore_id, lthread_tx_per_ring,
+// 				   (void *)tx_conf);
 
-	RTE_LOG(INFO, L3FWD, "Entering Tx main loop on lcore %u\n", lcore_id);
+// 	lcore_id = rte_lcore_id();
 
-	tx_conf->conf.cpu_id = sched_getcpu();
-	while (1)
-	{
+// 	RTE_LOG(INFO, L3FWD, "Entering Tx main loop on lcore %u\n", lcore_id);
 
-		lthread_sleep(BURST_TX_DRAIN_US * 1000);
+// 	tx_conf->conf.cpu_id = sched_getcpu();
+// 	while (1)
+// 	{
 
-		/*
-		 * TX burst queue drain
-		 */
-		for (portid = 0; portid < RTE_MAX_ETHPORTS; portid++)
-		{
-			if (tx_conf->tx_mbufs[portid].len == 0)
-				continue;
-			SET_CPU_BUSY(tx_conf, CPU_PROCESS);
-			send_burst(tx_conf, tx_conf->tx_mbufs[portid].len, portid);
-			SET_CPU_IDLE(tx_conf, CPU_PROCESS);
-			tx_conf->tx_mbufs[portid].len = 0;
-		}
-	}
-	return NULL;
-}
+// 		lthread_sleep(BURST_TX_DRAIN_US * 1000);
 
-static void *
+// 		/*
+// 		 * TX burst queue drain
+// 		 */
+// 		for (portid = 0; portid < RTE_MAX_ETHPORTS; portid++)
+// 		{
+// 			if (tx_conf->tx_mbufs[portid].len == 0)
+// 				continue;
+// 			SET_CPU_BUSY(tx_conf, CPU_PROCESS);
+// 			send_burst(tx_conf, tx_conf->tx_mbufs[portid].len, portid);
+// 			SET_CPU_IDLE(tx_conf, CPU_PROCESS);
+// 			tx_conf->tx_mbufs[portid].len = 0;
+// 		}
+// 	}
+// 	return NULL;
+// }
+
+uint64_t pkt_cnt = 0;
+uint64_t cycles_total = 0;
+uint64_t times_total = 0;
+
 lthread_rx(void *dummy)
 {
 	int ret;
@@ -2273,6 +2379,75 @@ lthread_rx(void *dummy)
 					(void **)pkts_burst,
 					nb_rx, NULL);
 
+				// memset(ipv4_5tuple, 0, sizeof());
+				for (int i = 0; i < nb_rx; i++)
+				{
+					//
+					// rte_atomic64_inc(&pkt_cnt);
+					pkt_cnt++;
+					uint32_t sip, dip;
+					uint16_t sp, dp;
+					uint8_t proto_id;
+					// printf("11111111111111\n");
+
+					uint64_t time_start, time_end;
+					struct ipv4_5tuple *ft = (struct ipv4_5tuple *)malloc(sizeof(struct ipv4_5tuple));
+					// 获取五元组
+					// rte_eth_read_clock(0, &time_end);
+					time_start = get_time();
+					uint64_t cycles_start = rte_rdtsc();
+					struct rte_ipv4_hdr *ipv4_hdr = rte_pktmbuf_mtod_offset(pkts_burst[i], struct rte_ipv4_hdr *, sizeof(struct rte_ether_hdr));
+					sip = rte_be_to_cpu_32(ipv4_hdr->src_addr);
+					dip = rte_be_to_cpu_32(ipv4_hdr->dst_addr);
+					proto_id = ipv4_hdr->next_proto_id;
+
+					// struct rte_udp_hdr *udphdr = (struct rte_udp_hdr *);
+					struct rte_udp_hdr *udphdr = rte_pktmbuf_mtod_offset(pkts_burst[i], struct rte_ipv4_hdr *, sizeof(struct rte_ether_hdr) + sizeof(struct rte_ipv4_hdr));
+					sp = rte_be_to_cpu_16(udphdr->src_port);
+					dp = rte_be_to_cpu_16(udphdr->dst_port);
+					// // 给结构体赋值
+					ft->ip_src = sip;
+					ft->ip_dst = dip;
+					ft->port_src = sp;
+					ft->port_dst = dp;
+					ft->proto = proto_id;
+					// uint32_t hash = murmur3(ft, sizeof(struct ipv4_5tuple), i);
+
+					uint32_t inc = 2;
+					for (int m = 0; m < M; m++)
+					{
+						uint64_t j = murmur3((const void *)ft, sizeof(struct ipv4_5tuple), m * m) % N; // crc32(buf, i + 1) % n;
+						uint64_t newval = counters[m][j] + inc;
+						if (newval >= 0xffffffff)
+							newval = 0xffffffff;
+						counters[m][j] = (uint32_t)newval;
+					}
+
+					free(ft);
+					uint64_t cycles = rte_rdtsc() - cycles_start;
+					uint64_t time_spend = get_time() - time_start;
+					// printf("cycles: %ld\n", cycles);
+					// printf("ns: %ld\n", time_end);
+
+					// rte_atomic64_inc(&pkt_cnt);
+					// rte_atomic64_add(&times_total, time_spend);
+					// rte_atomic64_add(&cycles_total, cycles);
+					times_total += time_spend;
+					cycles_total += cycles;
+
+					// printf("ns: %ld\n", time_end - time_start);
+					// printf("%d\n", rte_atomic64_read(&pkt_cnt));
+					// if (rte_atomic64_read(&pkt_cnt) > 10000000)
+					printf("cycles:%d\n", cycles);
+					printf("time_spend:%d\n", time_spend);
+					if (pkt_cnt > 100000)
+					{
+						printf("avg_cycles:%d\n", cycles_total / pkt_cnt);
+						printf("avg_time:%d\n", times_total / pkt_cnt);
+						exit(0);
+					}
+				}
+
 				new_len = old_len + ret;
 
 				if (new_len >= BURST_SIZE)
@@ -2333,20 +2508,20 @@ lthread_spawner(__rte_unused void *arg)
 	 * Wait for all producers. Until some producers can be started on the same
 	 * scheduler as this lthread, yielding is required to let them to run and
 	 * prevent deadlock here.
-	 */
-	while (rte_atomic16_read(&rx_counter) < n_rx_thread)
-		lthread_sleep(100000);
+	//  */
+	// while (rte_atomic16_read(&rx_counter) < n_rx_thread)
+	// 	lthread_sleep(100000);
 
 	/*
 	 * Create consumers (tx threads) on default lcore_id
 	 */
-	for (i = 0; i < n_tx_thread; i++)
-	{
-		tx_thread[i].conf.thread_id = i;
-		lthread_create(&lt[n_thread], -1, lthread_tx,
-					   (void *)&tx_thread[i]);
-		n_thread++;
-	}
+	// for (i = 0; i < n_tx_thread; i++)
+	// {
+	// 	tx_thread[i].conf.thread_id = i;
+	// 	lthread_create(&lt[n_thread], -1, lthread_rx,
+	// 				   (void *)&rx_thread[i]);
+	// 	n_thread++;
+	// }
 
 	/*
 	 * Wait for all threads finished
@@ -2424,7 +2599,7 @@ pthread_tx(void *dummy)
 
 		cur_tsc = rte_rdtsc();
 
-		/*
+		/*rx_counter
 		 * TX burst queue drain
 		 */
 		diff_tsc = cur_tsc - prev_tsc;
@@ -3960,6 +4135,7 @@ int main(int argc, char **argv)
 #endif
 
 		lthread_num_schedulers_set(nb_lcores);
+
 		rte_eal_mp_remote_launch(sched_spawner, NULL, SKIP_MASTER);
 		lthread_master_spawner(NULL);
 	}
