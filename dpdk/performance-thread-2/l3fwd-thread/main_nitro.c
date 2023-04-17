@@ -70,7 +70,7 @@ uint32_t counters[M][N] = {0};
 int next_packet = 1;
 int next_bucket = 0;
 
-#define PROB 0.4
+#define PROB 0.9
 #define W 65536
 #define NS_D 4
 typedef struct nitrosketch
@@ -103,6 +103,16 @@ static inline uint64_t get_geometric_random(double probability)
         }
     }
     return rnd;
+}
+
+static inline uint32_t get_geometric_random2(double prob)
+{
+    double rand = 1;
+
+    while (rand == 1 || rand == 0)
+        rand = (double)rte_rand() / (double)(RAND_MAX);
+
+    return (uint32_t)ceil(log(1 - rand) / log(1 - prob));
 }
 
 static inline uint32_t rotl32(uint32_t x, int8_t r)
@@ -2468,7 +2478,7 @@ lthread_rx(void *dummy)
                             ns1->value[k][hash[k]] += (int)delta;
 
                             int sample = 1;
-
+                            // printf("eeeeeeeeeeeeeeeeeeeeeeeeeeee\n");
                             uint64_t random_num = get_geometric_random(PROB);
 
                             sample = 1 + random_num;
