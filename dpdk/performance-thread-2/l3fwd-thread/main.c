@@ -411,7 +411,7 @@ static struct tx_thread_params tx_thread_params_array_default[] = {
 	{10, 6},
 	{11, 7},
 	{12, 8},
-};
+	{13, 9}};
 
 static struct tx_thread_params *tx_thread_params =
 	tx_thread_params_array_default;
@@ -2450,14 +2450,11 @@ lthread_rx(void *dummy)
 
 						uint64_t time_end = get_time();
 						uint64_t cycles_end = rte_rdtsc();
-						if (cur_thread_id != 1)
-						{
-							printf("avg_cycles:%d\n", (cycles_end - cycles_start) / pkt_cnt);
-							printf("throughoutput:%d\n", (1000000000 * pkt_cnt) / (time_end - time_start));
-							printf("cur_thread_id = %d\n;", cur_thread_id);
-							printf("cur_cpu_id = %d\n", cur_cpu_id);
-						}
 
+						printf("avg_cycles:%d\n", (cycles_end - cycles_start) / pkt_cnt);
+						printf("throughoutput:%d\n", (1000000000 * pkt_cnt) / (time_end - time_start));
+						printf("cur_cpu_id = %d\n", cur_cpu_id);
+						fflush(stdout);
 						pkt_cnt = 0;
 						time_start = get_time();
 						cycles_start = rte_rdtsc();
