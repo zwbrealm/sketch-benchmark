@@ -2353,7 +2353,7 @@ void htable_create(struct rte_hash *hash_table)
     hash_params.hash_func = rte_hash_crc;
     hash_params.hash_func_init_val = 0;
 
-    hash_params.name = "htable_0";
+    // hash_params.name = "htable_0";
     hash_params.socket_id = rte_lcore_to_socket_id(rte_get_master_lcore());
     hash_params.extra_flag = RTE_HASH_EXTRA_FLAGS_RW_CONCURRENCY;
     // hash_params.key_mode = RTE_HASH_KEY_MODE_DUP;

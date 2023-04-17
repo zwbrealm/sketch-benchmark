@@ -2452,7 +2452,7 @@ lthread_rx(void *dummy)
 
                     unsigned int idx = murmur3((const void *)ft, sizeof(ft), 0x11111111);
                     // insert
-                    unsigned int *hash = malloc(NS_D * sizeof(unsigned int));
+                    unsigned int *hash = (unsigned int *)malloc(NS_D * sizeof(unsigned int));
                     next_packet--;
 
                     if (next_packet == 0)

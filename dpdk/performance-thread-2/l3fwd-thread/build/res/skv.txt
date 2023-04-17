@@ -1,0 +1,14 @@
+./nitro cores:2:  cycle:619  throughoutput 5860242
+./nitro cores:1:  cycle:710  throughoutput 2526258
+./nitro cores:1:  cycle:709  throughoutput 2531140
+./nitro cores:2:  cycle:619  throughoutput 5887017
+./skv cores:1:  cycle:341  throughoutput 5257887
+./skv cores:2:  cycle:358  throughoutput 10673871
+./skv cores:3:  cycle:472  throughoutput 11813437
+./skv cores:4:  cycle:563  throughoutput 13014008
+./skv cores:5:  cycle:780  throughoutput 11821470
+./skv cores:6:  cycle:931  throughoutput 11656012
+./skv cores:7:  cycle:1041  throughoutput 12585521
+./skv cores:8:  cycle:1177  throughoutput 12383843
+./skv cores:9:  cycle:1453  throughoutput 11331745
+./skv cores:10:  cycle:1678  throughoutput 10860394

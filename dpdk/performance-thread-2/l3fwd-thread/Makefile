@@ -11,10 +11,10 @@ RTE_TARGET ?= $(notdir $(abspath $(dir $(firstword $(wildcard $(RTE_SDK)/*/.conf
 include $(RTE_SDK)/mk/rte.vars.mk
 
 # binary name
-APP = fr
+APP = skv
 
 # all source are stored in SRCS-y
-SRCS-y := main_fr.c
+SRCS-y := main_skv.c
 # SRCS-y += uthash.c
 include $(RTE_SDK)/examples/performance-thread/common/common.mk
 
