@@ -72,11 +72,7 @@ int next_bucket = 0;
 
 #define PROB 0.9
 #define W 65536
-#define NS_D 4
-typedef struct nitrosketch
-{
-    int value[NS_D][W];
-} ns;
+#define NS_D 3
 
 hashseed[4] = {0x12345678, 0x123f5678, 0x1234567f, 0x12345f78};
 
@@ -89,14 +85,14 @@ uint64_t get_time()
     return ns;
 }
 
-static inline uint64_t get_geometric_random(double probability)
+static inline uint32_t get_geometric_random(double probability)
 {
-    long rnd = 0;
-    uint64_t rand_max = (1 << 64) - 1;
+    int rnd = 0;
+
     while (true)
     {
         rnd++;
-        double pV = (double)rte_rand() / (double)rand_max;
+        double pV = (double)rand() / (double)RAND_MAX;
         if (pV < probability)
         {
             break;
@@ -2395,7 +2391,9 @@ lthread_rx(void *dummy)
     uint32_t cur_cpu_id = sched_getcpu();
     // printf("cur_thread_id = %d\n", cur_thread_id);
     // printf("cur_cpu_id =    %d\n", cur_cpu_id);
-    ns *ns1 = (ns *)malloc(sizeof(ns));
+
+    unsigned int *hash = (unsigned int *)malloc(NS_D * sizeof(unsigned int));
+    int nitrosketch[NS_D][W] = {0};
     uint64_t time_start = get_time();
     uint64_t cycles_start = rte_rdtsc();
     while (1)
@@ -2460,9 +2458,8 @@ lthread_rx(void *dummy)
                     ft->proto = proto_id;
                     // uint32_t hash = murmur3(ft, sizeof(struct ipv4_5tuple), i);
 
-                    unsigned int idx = murmur3((const void *)ft, sizeof(ft), 0x11111111);
                     // insert
-                    unsigned int *hash = (unsigned int *)malloc(NS_D * sizeof(unsigned int));
+
                     next_packet--;
 
                     if (next_packet == 0)
@@ -2475,11 +2472,11 @@ lthread_rx(void *dummy)
                         {
                             k = next_bucket;
                             double delta = 1.0 / PROB * (2 * (int)(hash[k] & 1) - 1);
-                            ns1->value[k][hash[k]] += (int)delta;
+                            nitrosketch[k][hash[k]] += (int)delta;
 
                             int sample = 1;
                             // printf("eeeeeeeeeeeeeeeeeeeeeeeeeeee\n");
-                            uint64_t random_num = get_geometric_random(PROB);
+                            uint32_t random_num = get_geometric_random(PROB);
 
                             sample = 1 + random_num;
 

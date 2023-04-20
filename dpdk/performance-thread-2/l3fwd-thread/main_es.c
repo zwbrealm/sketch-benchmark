@@ -2392,14 +2392,17 @@ lthread_rx(void *dummy)
     hp = (struct HeavyPart *)malloc(sizeof(struct HeavyPart));
     uint64_t time_start = get_time();
     uint64_t cycles_start = rte_rdtsc();
+    // printf("11111111111111\n");
     while (1)
     {
 
         /*
          * Read packet from RX queues
          */
+        // printf("21111111111111\n");
         for (i = 0; i < rx_conf->n_rx_queue; ++i)
         {
+            // printf("31111111111111\n");
 
             portid = rx_conf->rx_queue_list[i].port_id;
             queueid = rx_conf->rx_queue_list[i].queue_id;
@@ -2411,6 +2414,7 @@ lthread_rx(void *dummy)
 
             if (nb_rx != 0)
             {
+                // printf("41111111111111\n");
 
                 worker_id = (worker_id + 1) % rx_conf->n_ring;
                 old_len = len[worker_id];
@@ -2430,7 +2434,7 @@ lthread_rx(void *dummy)
                     uint32_t sip, dip;
                     uint16_t sp, dp;
                     uint8_t proto_id;
-                    // printf("11111111111111\n");
+                    // printf("51111111111111\n");
 
                     // uint64_t time_start, time_end;
                     struct ipv4_5tuple *ft = (struct ipv4_5tuple *)malloc(sizeof(struct ipv4_5tuple));
