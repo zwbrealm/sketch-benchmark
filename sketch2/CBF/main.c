@@ -86,7 +86,7 @@ long long time_total_ns = 0;
 long long cycle_total = 0;
 fivetuple *ft = (fivetuple *)malloc(sizeof(fivetuple));
 // definetion template + auguments_list
-CountBloomFilter cbf = CountBloomFilter(1048576, 3);
+CountBloomFilter cbf = CountBloomFilter(2621440, 4);
 static inline uint64_t rdtsc()
 {
     unsigned int lo, hi;

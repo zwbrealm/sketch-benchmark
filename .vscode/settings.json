@@ -1,0 +1,18 @@
+{
+    "files.associations": {
+        "vector": "c",
+        "memory": "c",
+        "optional": "c",
+        "string_view": "c",
+        "string": "c",
+        "system_error": "c",
+        "elasticsketch.h": "c",
+        "hash.h": "c",
+        "countheap.h": "c",
+        "csketch.h": "c",
+        "*.tcc": "c",
+        "deque": "c",
+        "unordered_map": "c",
+        "unordered_set": "c"
+    }
+}

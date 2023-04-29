@@ -65,9 +65,9 @@
 // #define M 4
 // #define N 65536
 // uint32_t counters[M][N] = {0};
-
-#define M 4
-#define N 65536
+// printf("1111111111111111111111111")
+#define M 8
+#define N 327680
 uint32_t counters[M][N] = {0};
 
 //_Static_assert((COLUMNS & (COLUMNS - 1)) == 0, "COLUMNS must be a power of two");

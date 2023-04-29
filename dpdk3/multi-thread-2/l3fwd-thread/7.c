@@ -64,12 +64,12 @@
 
 #define M 8
 #define N 1048576
-uint32_t counters_cm[M][N] = {0};
-uint32_t counters_cs[M][N] = {0};
+// uint32_t counters_cm[M][N] = {0};
+// uint32_t counters_cs[M][N] = {0};
 
 #define HASHN 4
 #define N_COUNTING_BLOOM_FILTER 2621440
-uint32_t counters_cbf[N_COUNTING_BLOOM_FILTER] = {0};
+// uint32_t counters_cbf[N_COUNTING_BLOOM_FILTER] = {0};
 
 #define heavy_size 100000
 #define light_size_m 8
@@ -2556,6 +2556,9 @@ lthread_rx(void *dummy)
     record_t l, *p, *r, *tmp, *records = NULL;
     UT_hash_handle hh;
     um *Univ = (um *)malloc(sizeof(struct Univmon));
+    uint32_t counters_cm[M][N] = {0};
+    uint32_t counters_cs[M][N] = {0};
+    uint32_t counters_cbf[N_COUNTING_BLOOM_FILTER] = {0};
     uint64_t time_start = get_time();
     uint64_t cycles_start = rte_rdtsc();
     while (1)

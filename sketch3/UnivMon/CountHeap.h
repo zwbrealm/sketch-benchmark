@@ -20,8 +20,9 @@ private:
 public:
 	CountHeap(int memory_in_bytes)
 	{
-		int w = memory_in_bytes * light_ratio / 4 / d;
+		// int w = memory_in_bytes * light_ratio / 4 / d;
 		// int w = memory_in_bytes / 4 / d;
+		int w =26042;
 		int heap_size = memory_in_bytes * heavy_ratio /
 						((sizeof(uint32_t) + 4) * 2 + sizeof(uint32_t) + sizeof(uint32_t));
 

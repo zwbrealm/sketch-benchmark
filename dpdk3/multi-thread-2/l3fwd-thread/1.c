@@ -64,7 +64,7 @@
 
 #define M 8
 #define N 327680
-uint32_t counters[M][N] = {0};
+// uint32_t counters[M][N] = {0};
 
 uint64_t get_time()
 {
@@ -2355,7 +2355,7 @@ lthread_rx(void *dummy)
     uint32_t cur_cpu_id = sched_getcpu();
     // printf("cur_thread_id = %d\n", cur_thread_id);
     // printf("cur_cpu_id =    %d\n", cur_cpu_id);
-
+    uint32_t counters_cm[M][N] = {0};
     uint64_t time_start = get_time();
     uint64_t cycles_start = rte_rdtsc();
     while (1)
@@ -2424,10 +2424,10 @@ lthread_rx(void *dummy)
                     for (int m = 0; m < M; m++)
                     {
                         uint64_t j = murmur3((const void *)ft, sizeof(struct ipv4_5tuple), m * m) % N; // crc32(buf, i + 1) % n;
-                        uint64_t newval = counters[m][j] + inc;
+                        uint64_t newval = counters_cm[m][j] + inc;
                         if (newval >= 0xffffffff)
                             newval = 0xffffffff;
-                        counters[m][j] = (uint32_t)newval;
+                        counters_cm[m][j] = (uint32_t)newval;
                     }
 
                     free(ft);

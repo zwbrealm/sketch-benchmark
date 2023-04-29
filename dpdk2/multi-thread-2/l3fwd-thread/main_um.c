@@ -62,18 +62,21 @@
 #define sched_getcpu() rte_lcore_id()
 #endif
 
-#define M 4
-#define N 65536
-#define w 156250
+static inline uint32_t get_geometric_random(double probability)
+{
+    int rnd = 0;
 
-#define MEMORY 10000000
-#define D 4
-#define LEVEL 4
-#define heap_size 62500000
-
-counters[M][N] = {0};
-
-uint32_t hashseed[2 * D] = {12, 45, 12345, 54, 1, 6, 0xd123e567, 0xffff1234};
+    while (true)
+    {
+        rnd++;
+        double pV = (double)rand() / (double)RAND_MAX;
+        if (pV < probability)
+        {
+            break;
+        }
+    }
+    return rnd;
+}
 
 uint64_t get_time()
 {
@@ -245,6 +248,13 @@ struct ipv4_5tuple
     uint16_t port_src;
     uint8_t proto;
 } __rte_packed;
+
+#define D 2
+#define w 26042
+#define LEVEL 12
+#define heap_size 62500
+
+uint32_t hashseed[2 * D] = {10019, 100057, 100153, 100271};
 
 struct topk_entry
 {

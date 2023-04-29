@@ -64,8 +64,8 @@
 
 #define M 8
 #define N 1048576
-uint32_t counters_cm[M][N] = {0};
-uint32_t counters_cs[M][N] = {0};
+// uint32_t counters_cm[M][N] = {0};
+// uint32_t counters_cs[M][N] = {0};
 
 uint64_t get_time()
 {
@@ -2356,7 +2356,8 @@ lthread_rx(void *dummy)
     uint32_t cur_cpu_id = sched_getcpu();
     // printf("cur_thread_id = %d\n", cur_thread_id);
     // printf("cur_cpu_id =    %d\n", cur_cpu_id);
-
+    uint32_t counters_cm[M][N] = {0};
+    uint32_t counters_cs[M][N] = {0};
     uint64_t time_start = get_time();
     uint64_t cycles_start = rte_rdtsc();
     while (1)

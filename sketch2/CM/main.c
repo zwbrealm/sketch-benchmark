@@ -86,7 +86,8 @@ long long time_total_ns = 0;
 long long cycle_total = 0;
 fivetuple *ft = (fivetuple *)malloc(sizeof(fivetuple));
 // definetion template + auguments_list
-CountMin cm = CountMin(3, 1048576);
+CountMin cm = CountMin(8, 327680);
+
 static inline uint64_t rdtsc()
 {
     unsigned int lo, hi;

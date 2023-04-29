@@ -1,5 +1,5 @@
 dep_main_nitro.o = \
- /home/zju/Desktop/zwb/libcap_dpdk/sketch/dpdk/performance-thread-2/l3fwd-thread/main_nitro.c \
+ /home/zju/Desktop/zwb/libcap_dpdk/sketch/dpdk2/multi-thread-2/l3fwd-thread/main_nitro.c \
  /usr/include/stdc-predef.h \
  /home/zju/Documents/dpdk-20.08/x86_64-native-linuxapp-gcc/include/rte_config.h \
  /usr/include/stdio.h \

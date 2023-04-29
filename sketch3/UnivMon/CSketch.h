@@ -12,7 +12,7 @@
 
 using namespace std;
 
-const uint32_t d=5;
+const uint32_t d=2;
 class CSketch
 {	
 private:

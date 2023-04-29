@@ -61,14 +61,10 @@
 #ifndef __GLIBC__ /* sched_getcpu() is glibc specific */
 #define sched_getcpu() rte_lcore_id()
 #endif
-
-#define M 4
-#define N 65536
-uint32_t counters[M][N] = {0};
-
+// printf("1111111111111111111111111")
 #define heavy_size 100000
-#define light_size_m 3
-#define light_size_n 2000000
+#define light_size_m 8
+#define light_size_n 245760
 #define lamda 8
 
 struct twoTuple_t

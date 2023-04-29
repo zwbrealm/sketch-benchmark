@@ -13,7 +13,7 @@
 #include <cmath>
 #include <math.h>
 
-#define COUNTER_PER_BUCKET 8
+#define COUNTER_PER_BUCKET 4
 #define MAX_VALID_COUNTER 7
 
 #define ALIGNMENT 64

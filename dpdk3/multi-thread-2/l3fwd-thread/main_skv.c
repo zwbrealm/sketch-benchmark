@@ -261,7 +261,7 @@ typedef struct
 #define M 4
 #define N 2611440
 #define SIZE 500000
-uint32_t counters[M][N] = {0};
+
 
 #define heavy_size 100000
 #define light_size_m 4
@@ -2451,6 +2451,7 @@ lthread_rx(void *dummy)
     // printf("cur_cpu_id =    %d\n", cur_cpu_id);
     record_t l, *p, *r, *tmp, *records = NULL;
     UT_hash_handle hh;
+    uint32_t counters_skv[M][N] = {0};
     // struct ipv4_5tuple *tmp_flow = (struct ipv4_5tuple *)malloc(sizeof(struct ipv4_5tuple));
     // for (int k = 0; k < 10000; k++)
     // {
@@ -2554,11 +2555,11 @@ lthread_rx(void *dummy)
                         for (int m = 0; m < M; m++)
                         {
                             uint32_t j = murmur3((const void *)ft, sizeof(ft), m * m) % N;
-                            uint32_t newval = counters[m][j] + 1;
+                            uint32_t newval = counters_skv[m][j] + 1;
                             // TODO: resolve this limitation
                             if (newval >= 0xffffffff)
                                 newval = 0xffffffff;
-                            counters[m][j] = (uint32_t)newval;
+                            counters_skv[m][j] = (uint32_t)newval;
                         }
                     }
                     else

@@ -1,5 +1,5 @@
 dep_main_skv.o = \
- /home/zju/Desktop/zwb/libcap_dpdk/sketch/dpdk/performance-thread-2/l3fwd-thread/main_skv.c \
+ /home/zju/Desktop/zwb/libcap_dpdk/sketch/dpdk3/multi-thread-2/l3fwd-thread/main_skv.c \
  /usr/include/stdc-predef.h \
  /home/zju/Documents/dpdk-20.08/x86_64-native-linuxapp-gcc/include/rte_config.h \
  /usr/include/stdio.h \
@@ -272,7 +272,7 @@ dep_main_skv.o = \
  /home/zju/Documents/dpdk-20.08/x86_64-native-linuxapp-gcc/include/rte_timer.h \
  /home/zju/Documents/dpdk-20.08/x86_64-native-linuxapp-gcc/include/cmdline_parse.h \
  /home/zju/Documents/dpdk-20.08/x86_64-native-linuxapp-gcc/include/cmdline_parse_etheraddr.h \
- /home/zju/Desktop/zwb/libcap_dpdk/sketch/dpdk/performance-thread-2/l3fwd-thread/uthash.c \
+ /home/zju/Desktop/zwb/libcap_dpdk/sketch/dpdk3/multi-thread-2/l3fwd-thread/uthash.c \
  /home/zju/Documents/dpdk-20.08/examples/performance-thread/common/lthread_api.h \
  /usr/include/fcntl.h /usr/include/x86_64-linux-gnu/bits/fcntl.h \
  /usr/include/x86_64-linux-gnu/bits/fcntl-linux.h \

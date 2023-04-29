@@ -8,7 +8,7 @@ using namespace std;
 class UnivMon
 {
 private:
-    const uint32_t LEVEL = 4;
+    const uint32_t LEVEL = 12;
     // const uint32_t LEVEL = 1;
     CountHeap **sketches;
 

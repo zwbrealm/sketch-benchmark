@@ -61,10 +61,10 @@
 #ifndef __GLIBC__ /* sched_getcpu() is glibc specific */
 #define sched_getcpu() rte_lcore_id()
 #endif
-
-#define M 4
-#define N 65536
-counters[M][N] = {0};
+// printf("1111111111111111111111111")
+#define M 8
+#define N 327680
+uint32_t counters[M][N] = {0};
 
 uint64_t get_time()
 {

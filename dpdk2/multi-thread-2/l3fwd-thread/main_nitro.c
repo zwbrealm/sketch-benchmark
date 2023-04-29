@@ -62,16 +62,12 @@
 #define sched_getcpu() rte_lcore_id()
 #endif
 
-#define M 4
-#define N 65536
-
-uint32_t counters[M][N] = {0};
 
 int next_packet = 1;
 int next_bucket = 0;
 
 #define PROB 0.9
-#define W 65536
+#define W 327680
 #define NS_D 3
 
 hashseed[4] = {0x12345678, 0x123f5678, 0x1234567f, 0x12345f78};
@@ -2391,7 +2387,8 @@ lthread_rx(void *dummy)
     uint32_t cur_cpu_id = sched_getcpu();
     // printf("cur_thread_id = %d\n", cur_thread_id);
     // printf("cur_cpu_id =    %d\n", cur_cpu_id);
-
+    next_packet = 1;
+    next_bucket = 0;
     unsigned int *hash = (unsigned int *)malloc(NS_D * sizeof(unsigned int));
     int nitrosketch[NS_D][W] = {0};
     uint64_t time_start = get_time();
