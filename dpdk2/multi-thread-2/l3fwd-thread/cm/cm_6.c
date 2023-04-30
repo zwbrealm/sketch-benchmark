@@ -65,7 +65,7 @@
 #define M 8
 #define N 327680
 // uint32_t counters[M][N] = {0};
-
+hashseed[8] = {0x2d31e867, 0x6ad611c4,  0x00000000, 0xffffffff,10000103,10000229,10000223,10000339};
 uint64_t get_time()
 {
 	struct timespec time1 = {0, 0};
@@ -2428,7 +2428,7 @@ lthread_rx(void *dummy)
 					uint32_t inc = 2;
 					for (int m = 0; m < M; m++)
 					{
-						uint64_t j = murmur3((const void *)ft, sizeof(struct ipv4_5tuple), m * m) % N; // crc32(buf, i + 1) % n;
+						uint64_t j = murmur3((const void *)ft, sizeof(struct ipv4_5tuple), hashseed[m]) % N; // crc32(buf, i + 1) % n;
 						uint64_t newval = counters_cm1[m][j] + inc;
 						if (newval >= 0xffffffff)
 							newval = 0xffffffff;
@@ -2436,7 +2436,7 @@ lthread_rx(void *dummy)
 					}
                     for (int m = 0; m < M; m++)
 					{
-						uint64_t j = murmur3((const void *)ft, sizeof(struct ipv4_5tuple), m * m) % N; // crc32(buf, i + 1) % n;
+						uint64_t j = murmur3((const void *)ft, sizeof(struct ipv4_5tuple),hashseed[m]) % N; // crc32(buf, i + 1) % n;
 						uint64_t newval = counters_cm2[m][j] + inc;
 						if (newval >= 0xffffffff)
 							newval = 0xffffffff;
@@ -2444,7 +2444,7 @@ lthread_rx(void *dummy)
 					}
                     for (int m = 0; m < M; m++)
 					{
-						uint64_t j = murmur3((const void *)ft, sizeof(struct ipv4_5tuple), m * m) % N; // crc32(buf, i + 1) % n;
+						uint64_t j = murmur3((const void *)ft, sizeof(struct ipv4_5tuple), hashseed[m]) % N; // crc32(buf, i + 1) % n;
 						uint64_t newval = counters_cm3[m][j] + inc;
 						if (newval >= 0xffffffff)
 							newval = 0xffffffff;
@@ -2452,7 +2452,7 @@ lthread_rx(void *dummy)
 					}
                     for (int m = 0; m < M; m++)
 					{
-						uint64_t j = murmur3((const void *)ft, sizeof(struct ipv4_5tuple), m * m) % N; // crc32(buf, i + 1) % n;
+						uint64_t j = murmur3((const void *)ft, sizeof(struct ipv4_5tuple), hashseed[m]) % N; // crc32(buf, i + 1) % n;
 						uint64_t newval = counters_cm4[m][j] + inc;
 						if (newval >= 0xffffffff)
 							newval = 0xffffffff;
@@ -2460,7 +2460,7 @@ lthread_rx(void *dummy)
 					}
                     for (int m = 0; m < M; m++)
 					{
-						uint64_t j = murmur3((const void *)ft, sizeof(struct ipv4_5tuple), m * m) % N; // crc32(buf, i + 1) % n;
+						uint64_t j = murmur3((const void *)ft, sizeof(struct ipv4_5tuple), hashseed[m]) % N; // crc32(buf, i + 1) % n;
 						uint64_t newval = counters_cm5[m][j] + inc;
 						if (newval >= 0xffffffff)
 							newval = 0xffffffff;
@@ -2468,7 +2468,7 @@ lthread_rx(void *dummy)
 					}
                     for (int m = 0; m < M; m++)
 					{
-						uint64_t j = murmur3((const void *)ft, sizeof(struct ipv4_5tuple), m * m) % N; // crc32(buf, i + 1) % n;
+						uint64_t j = murmur3((const void *)ft, sizeof(struct ipv4_5tuple), hashseed[m]) % N; // crc32(buf, i + 1) % n;
 						uint64_t newval = counters_cm6[m][j] + inc;
 						if (newval >= 0xffffffff)
 							newval = 0xffffffff;

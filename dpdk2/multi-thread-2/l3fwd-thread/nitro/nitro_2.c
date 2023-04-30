@@ -72,9 +72,9 @@ int next_bucket = 0;
 
 #define PROB 0.5
 #define W 327680
-#define NS_D 3
+#define NS_D 8
 
-hashseed[4] = {0x12345678, 0x123f5678, 0x1234567f, 0x12345f78};
+hashseed[8] = {0x2d31e867, 0x6ad611c4,  0x00000000, 0xffffffff,10000103,10000229,10000223,10000339};
 
 uint64_t get_time()
 {
@@ -2391,7 +2391,8 @@ lthread_rx(void *dummy)
     uint32_t cur_cpu_id = sched_getcpu();
     // printf("cur_thread_id = %d\n", cur_thread_id);
     // printf("cur_cpu_id =    %d\n", cur_cpu_id);
-
+    next_packet = 1;
+    next_bucket = 0;
     unsigned int *hash = (unsigned int *)malloc(NS_D * sizeof(unsigned int));
     int nitrosketch1[NS_D][W] = {0};
     int nitrosketch2[NS_D][W] = {0};
@@ -2461,34 +2462,27 @@ lthread_rx(void *dummy)
 
                     // insert
 
-                    next_packet--;
-
-                    if (next_packet == 0)
-                    {
-                        for (int n = 0; n < NS_D; n++)
+                
+                    for (int n = 0; n < NS_D; n++){
+                        if((double)((rte_rand()& 0xfffffff)/4294967295) < PROB){
                             hash[n] = murmur3(ft, sizeof(struct ipv4_5tuple), hashseed[n]) % W;
-                        // hash[i]=(bobhash[i]->run(str, strlen(str))) % w;
-                        int k;
-                        for (;;)
-                        {
-                            k = next_bucket;
-                            double delta = 1.0 / PROB * (2 * (int)(hash[k] & 1) - 1);
-                            nitrosketch[k][hash[k]] += (int)delta;
-
-                            int sample = 1;
-                            // printf("eeeeeeeeeeeeeeeeeeeeeeeeeeee\n");
-                            uint32_t random_num = get_geometric_random(PROB);
-
-                            sample = 1 + random_num;
-
-                            next_bucket = next_bucket + sample;
-                            next_packet = next_bucket / NS_D;
-                            next_bucket %= NS_D;
-                            if (next_packet > 0)
-                                break;
+                            if(hash[n]<<31)
+                                nitrosketch1[n][hash[n]]--;
+                            else
+                                nitrosketch1[n][hash[n]]++;
                         }
                     }
 
+                    for (int n = 0; n < NS_D; n++){
+                        if((double)((rte_rand()& 0xfffffff)/4294967295) < PROB){
+                            hash[n] = murmur3(ft, sizeof(struct ipv4_5tuple), hashseed[n]) % W;
+                            if(hash[n]<<31)
+                                nitrosketch2[n][hash[n]]--;
+                            else
+                                nitrosketch2[n][hash[n]]++;
+                        }
+                    }
+            
                     free(ft);
                     // uint64_t cycles = rte_rdtsc() - cycles_start;
                     // uint64_t time_spend = get_time() - time_start;
@@ -2506,7 +2500,6 @@ lthread_rx(void *dummy)
                     // printf("time_spend:%d\n", time_spend);
                     if (pkt_cnt > 4000000)
                     {
-
                         uint64_t time_end = get_time();
                         uint64_t cycles_end = rte_rdtsc();
 

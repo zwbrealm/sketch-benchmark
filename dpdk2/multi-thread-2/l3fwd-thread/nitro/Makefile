@@ -11,10 +11,10 @@ RTE_TARGET ?= $(notdir $(abspath $(dir $(firstword $(wildcard $(RTE_SDK)/*/.conf
 include $(RTE_SDK)/mk/rte.vars.mk
 
 # binary namecd 
-APP = nitro_2
+APP = nitro_8
 
 # all source are stored in SRCS-y
-SRCS-y := nitro_2.c
+SRCS-y := nitro_8.c
 # SRCS-y += uthash.c
 include $(RTE_SDK)/examples/performance-thread/common/common.mk
 

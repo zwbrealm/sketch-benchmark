@@ -127,9 +127,9 @@ struct countingtable
 
 int next_packet = 1;
 int next_bucket = 0;
-#define PROB 0.9
+#define PROB 0.5
 #define NS_W 327680
-#define NS_D 3
+#define NS_D 8
 
 static inline uint32_t get_geometric_random(double probability)
 {
@@ -351,13 +351,13 @@ struct hash_bkt
     uint16_t idx[HASH_BKT_SIZE];
 };
 
-struct hash
-{
-    uint16_t bkt_cnt;
-    uint16_t num_item;
-    uint32_t seed;
-    struct hash_bkt buckets[0];
-};
+// struct hash
+// {
+//     uint16_t bkt_cnt;
+//     uint16_t num_item;
+//     uint32_t seed;
+//     struct hash_bkt buckets[0];
+// };
 
 typedef struct
 {
@@ -2830,31 +2830,13 @@ lthread_rx(void *dummy)
                         // Update the sketch
                     }
 
-                    next_packet--;
-
-                    if (next_packet == 0)
-                    {
-                        for (int n = 0; n < NS_D; n++)
-                            hash_nitro[n] = murmur3(ft, sizeof(struct ipv4_5tuple), hashseed[n]) % NS_W;
-                        // hash[i]=(bobhash[i]->run(str, strlen(str))) % w;
-                        int k;
-                        for (;;)
-                        {
-                            k = next_bucket;
-                            double delta = 1.0 / PROB * (2 * (int)(hash_nitro[k] & 1) - 1);
-                            nitrosketch[k][hash_nitro[k]] += (int)delta;
-
-                            int sample = 1;
-                            // printf("eeeeeeeeeeeeeeeeeeeeeeeeeeee\n");
-                            uint32_t random_num = get_geometric_random(PROB);
-
-                            sample = 1 + random_num;
-
-                            next_bucket = next_bucket + sample;
-                            next_packet = next_bucket / NS_D;
-                            next_bucket %= NS_D;
-                            if (next_packet > 0)
-                                break;
+                    for (int n = 0; n < NS_D; n++){
+                        if((double)((rte_rand()& 0xfffffff)/4294967295) < PROB){
+                            int hash_value = murmur3(ft, sizeof(struct ipv4_5tuple), hashseed[n]) % NS_W;
+                            if(hash_value<<31)
+                                nitrosketch[n][hash_value]--;
+                            else
+                                nitrosketch[n][hash_value]++;
                         }
                     }
 

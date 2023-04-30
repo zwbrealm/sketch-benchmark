@@ -2360,6 +2360,7 @@ lthread_rx(void *dummy)
     uint32_t counters_cm3[M][N] = {0};
     uint32_t counters_cm4[M][N] = {0};
     uint32_t counters_cm5[M][N] = {0};
+    // uint32_t counters_cm6[M][N] = {0};
 	uint64_t time_start = get_time();
 	uint64_t cycles_start = rte_rdtsc();
 	while (1)
@@ -2435,7 +2436,7 @@ lthread_rx(void *dummy)
 					}
                     for (int m = 0; m < M; m++)
 					{
-						uint64_t j = murmur3((const void *)ft, sizeof(struct ipv4_5tuple), m * m) % N; // crc32(buf, i + 1) % n;
+						uint64_t j = murmur3((const void *)ft, sizeof(struct ipv4_5tuple), (m+9) *(m+9)) % N; // crc32(buf, i + 1) % n;
 						uint64_t newval = counters_cm2[m][j] + inc;
 						if (newval >= 0xffffffff)
 							newval = 0xffffffff;
@@ -2443,7 +2444,7 @@ lthread_rx(void *dummy)
 					}
                     for (int m = 0; m < M; m++)
 					{
-						uint64_t j = murmur3((const void *)ft, sizeof(struct ipv4_5tuple), m * m) % N; // crc32(buf, i + 1) % n;
+						uint64_t j = murmur3((const void *)ft, sizeof(struct ipv4_5tuple), (m+18) *(m+18)) % N; // crc32(buf, i + 1) % n;
 						uint64_t newval = counters_cm3[m][j] + inc;
 						if (newval >= 0xffffffff)
 							newval = 0xffffffff;
@@ -2451,7 +2452,7 @@ lthread_rx(void *dummy)
 					}
                     for (int m = 0; m < M; m++)
 					{
-						uint64_t j = murmur3((const void *)ft, sizeof(struct ipv4_5tuple), m * m) % N; // crc32(buf, i + 1) % n;
+						uint64_t j = murmur3((const void *)ft, sizeof(struct ipv4_5tuple), (m+27) *(m+27)) % N; // crc32(buf, i + 1) % n;
 						uint64_t newval = counters_cm4[m][j] + inc;
 						if (newval >= 0xffffffff)
 							newval = 0xffffffff;
@@ -2459,13 +2460,13 @@ lthread_rx(void *dummy)
 					}
                     for (int m = 0; m < M; m++)
 					{
-						uint64_t j = murmur3((const void *)ft, sizeof(struct ipv4_5tuple), m * m) % N; // crc32(buf, i + 1) % n;
+						uint64_t j = murmur3((const void *)ft, sizeof(struct ipv4_5tuple), (m+35) *(m+35)) % N; // crc32(buf, i + 1) % n;
 						uint64_t newval = counters_cm5[m][j] + inc;
 						if (newval >= 0xffffffff)
 							newval = 0xffffffff;
 						counters_cm5[m][j] = (uint32_t)newval;
 					}
-
+                 
 					free(ft);
 					// uint64_t cycles = rte_rdtsc() - cycles_start;
 					// uint64_t time_spend = get_time() - time_start;

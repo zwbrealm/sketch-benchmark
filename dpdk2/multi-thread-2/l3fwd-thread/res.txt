@@ -1,0 +1,11 @@
+7  1 cores:8:  cycle:612  throughoutput 23440276
+7  1 cores:8:  cycle:612  throughoutput 23441272
+cm  1 cores:8:  cycle:612  throughoutput 23441453
+cm  2 cores:8:  cycle:612  throughoutput 23441187
+cm  3 cores:8:  cycle:3897  throughoutput 3685430
+cm  4 cores:8:  cycle:4307  throughoutput 3335109
+cm  5 cores:8:  cycle:612  throughoutput 23441454
+cm  6 cores:8:  cycle:2118  throughoutput 6778834
+cm  7 cores:8:  cycle:3233  throughoutput 4443302
+cm  8 cores:8:  cycle:2166  throughoutput 6629327
+cs  1 cores:8:  cycle:612  throughoutput 23441091

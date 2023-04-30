@@ -1,0 +1,73 @@
+cm  1 cores8:  cycle:612  throughoutput 23441174
+cm  2 cores8:  cycle:612  throughoutput 23440836
+cm  3 cores8:  cycle:612  throughoutput 23441184
+cm  4 cores8:  cycle:612  throughoutput 23440071
+cm  5 cores8:  cycle:612  throughoutput 23439153
+cm  6 cores8:  cycle:612  throughoutput 23441095
+cm  7 cores8:  cycle:612  throughoutput 23440919
+cm  8 cores8:  cycle:612  throughoutput 23424753
+
+cs  1 cores8:  cycle:612  throughoutput 23440645
+cs  2 cores8:  cycle:4303  throughoutput 3338148
+cs  3 cores8:  cycle:5303  throughoutput 2708927
+cs  4 cores8:  cycle:11064  throughoutput 1298389
+cs  5 cores8:  cycle:9708  throughoutput 1479662
+cs  6 cores8:  cycle:612  throughoutput 23440912
+cs  7 cores8:  cycle:612  throughoutput 23440446
+cs  8 cores8:  cycle:2118  throughoutput 6781143
+
+cbf  1 cores8:  cycle:612  throughoutput 23440306
+cbf  2 cores8:  cycle:612  throughoutput 23440538
+cbf  3 cores8:  cycle:2161  throughoutput 6645293
+cbf  4 cores8:  cycle:10915  throughoutput 1316072
+cbf  5 cores8:  cycle:2175  throughoutput 6602233
+cbf  6 cores8:  cycle:612  throughoutput 23441317
+cbf  7 cores8:  cycle:612  throughoutput 23441035
+cbf  8 cores8:  cycle:612  throughoutput 23440646
+
+es  1 cores8:  cycle:669  throughoutput 21591427
+es  2 cores8:  cycle:1439  throughoutput 10004443
+es  3 cores8:  cycle:2223  throughoutput 6463786
+es  4 cores8:  cycle:4522  throughoutput 3177407
+es  5 cores8:  cycle:7614  throughoutput 1887052
+es  6 cores8:  cycle:4529  throughoutput 3173363
+es  7 cores8:  cycle:7880  throughoutput 1823362
+es  8 cores8:  cycle:9983  throughoutput 1439105
+
+//////////////////////////////////////////
+
+fr  1 cores8:  cycle:614  throughoutput 23360924
+fr  2 cores8:  cycle:987  throughoutput 15665216
+fr  3 cores8:  cycle:1477  throughoutput 9737479
+fr  4 cores8:  cycle:1923  throughoutput 7286352
+fr  5 cores8:  cycle:2491  throughoutput 5769078
+fr  6 cores8:  cycle:2884  throughoutput 4997368
+fr  7 cores8:  cycle:3468  throughoutput 4144529
+fr  8 cores8:  cycle:3808  throughoutput 3629112
+
+skv  1 cores8:  cycle:608  throughoutput 22964936
+skv  2 cores8:  cycle:1578  throughoutput 9344204
+skv  3 cores8:  cycle:2275  throughoutput 6492635
+skv  4 cores8:  cycle:2915  throughoutput 5040374
+skv  5 cores8:  cycle:3486  throughoutput 4173208
+skv  6 cores8:  cycle:3902  throughoutput 3429176
+skv  7 cores8:  cycle:4808  throughoutput 2974820
+skv  8 cores8:  cycle:5625  throughoutput 2614971
+
+um  1 cores8:  cycle:612  throughoutput 23438273
+um  2 cores8:  cycle:612  throughoutput 23427287 
+um  3 cores8:  cycle:671  throughoutput 21642536
+um  4 cores8:  cycle:779  throughoutput 18930944
+um  5 cores8:  cycle:944  throughoutput 16471657
+um  6 cores8:  cycle:1055  throughoutput 13616160
+um  7 cores8:  cycle:1176  throughoutput 12215823
+um  8 cores8:  cycle:1319  throughoutput 10886234
+
+nitro  1 cores8:  cycle:613  throughoutput 23392678
+nitro  2 cores8:  cycle:946  throughoutput 15179128
+nitro  3 cores8:  cycle:1178  throughoutput 12270247
+nitro  4 cores8:  cycle:1483  throughoutput 9769260
+nitro  5 cores8:  cycle:1649  throughoutput 8710888
+nitro  6 cores8:  cycle:2061  throughoutput 6997369
+nitro  7 cores8:  cycle:2454  throughoutput 5873622
+nitro  8 cores8:  cycle:2814  throughoutput 5115237

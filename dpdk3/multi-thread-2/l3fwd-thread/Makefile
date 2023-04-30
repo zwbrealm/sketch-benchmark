@@ -11,11 +11,11 @@ RTE_TARGET ?= $(notdir $(abspath $(dir $(firstword $(wildcard $(RTE_SDK)/*/.conf
 include $(RTE_SDK)/mk/rte.vars.mk
 
 # binary name
-APP = 8_2
+APP = 8
 
 # all source are stored in SRCS-y
 SRCS-y := 8_2.c
-# SRCS-y += uthash.c
+SRCS-y += uthash.c
 include $(RTE_SDK)/examples/performance-thread/common/common.mk
 
 CFLAGS += -O3 -g -mcmodel=medium $(USER_FLAGS) $(INCLUDES) $(WERROR_FLAGS)
