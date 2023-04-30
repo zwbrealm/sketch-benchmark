@@ -2,7 +2,7 @@ import os
 import time
 run_cmd = '-l 0-7 -n 2 -- -P -p 1 --rx="(0,0,0,0)(0,1,1,1)(0,2,2,2)(0,3,3,3)(0,4,4,4)(0,5,5,5)(0,6,6,6)(0,7,7,7)"'
 
-app_dir = ['cm','cs','cbf','es']
+app_dir = ['cbf']
 dict_cm1 = 0
 dict_cm2 = 0
 dict_cs1 = 0
@@ -13,7 +13,7 @@ dict_es1 = 0
 dict_es2 = 0
 
 # times_of_run = 5
-app_list = ['4','5','6','7','8']
+app_list = ['1','2','3','4','5','6','7','8']
 import os
 import time
 # import csv
@@ -71,7 +71,7 @@ num_cores_2 = 8
 
 for sketch_Name in app_dir:
      for j in app_list:
-        tmp_cmd = 'timeout -s SIGKILL 120s ./'+str(sketch_Name)+'/build/'+str(sketch_Name)+'_'+str(j)+' '+run_cmd
+        tmp_cmd = 'timeout -s SIGKILL 150s ./'+str(sketch_Name)+'/build/'+str(sketch_Name)+'_'+str(j)+' '+run_cmd
  
         str_1 = os.popen(tmp_cmd).read()
         str_1 = str_1.split('\n')
@@ -115,7 +115,11 @@ for sketch_Name in app_dir:
 
         print(throughoutput_dict)
         print(cpu_cycle_dict)
-
+        with open('log2.txt','a') as f1:
+            f1.write(str(sketch_Name)+'  '+str(j)+'\n')
+            f1.write('a='+str(throughoutput_dict)+'\n')
+            f1.write('b='+str(cpu_cycle_dict)+'\n')
+            f1.write('\n')
 
 
         overall_throughoutput = 0
@@ -126,15 +130,15 @@ for sketch_Name in app_dir:
 
 
         for i in range(num_cores_2):
-            overall_throughoutput+=throughoutput_dict[i][0]
-            overall_cpu_cycle+=cpu_cycle_dict[i][0]
+            overall_throughoutput+=throughoutput_dict[i][2]
+            overall_cpu_cycle+=cpu_cycle_dict[i][2]
         avg_cpu_cycle = overall_cpu_cycle/num_cores_2
         avg_cpu_cycle = int(avg_cpu_cycle)
 
        
 
         print(str(sketch_Name)+'  '+str(j)+' cores:'+str(num_cores_2)+':' + '  cycle: '+str(avg_cpu_cycle)+'  throughoutput  '+str(overall_throughoutput))
-        with open('res_2.txt','a') as f:
+        with open('res_3.txt','a') as f:
             f.write(str(sketch_Name)+'  '+str(j)+' cores'+str(num_cores_2)+':' + '  cycle:'+str(avg_cpu_cycle)+'  throughoutput '+str(overall_throughoutput)+'\n')
         
         # print(num_cores)

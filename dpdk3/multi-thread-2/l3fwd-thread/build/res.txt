@@ -1,5 +1,3 @@
-1 cores:8:  cycle:612  throughoutput 23440172
-2 cores:8:  cycle:612  throughoutput 23441388
 1 cores:8:  cycle:612  throughput 23441006
 2 cores:8:  cycle:612  throughput 23441303
 3 cores:8:  cycle:612  throughput 23440925

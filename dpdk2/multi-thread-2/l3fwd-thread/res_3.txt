@@ -1,0 +1,42 @@
+cm  1 cores8:  cycle:612  throughoutput 23435054
+cm  2 cores8:  cycle:612  throughoutput 23434896
+cm  3 cores8:  cycle:612  throughoutput 23435390
+cm  4 cores8:  cycle:612  throughoutput 23433701
+cm  5 cores8:  cycle:612  throughoutput 23435205
+cm  6 cores8:  cycle:612  throughoutput 23435557
+cm  7 cores8:  cycle:612  throughoutput 23435304
+cm  8 cores8:  cycle:612  throughoutput 23435094
+
+cs  1 cores8:  cycle:612  throughoutput 23435201
+cs  2 cores8:  cycle:612  throughoutput 23435181
+cs  3 cores8:  cycle:612  throughoutput 23435382
+cs  4 cores8:  cycle:612  throughoutput 23435587
+cs  5 cores8:  cycle:612  throughoutput 23435745
+cs  6 cores8:  cycle:612  throughoutput 23435712
+cs  7 cores8:  cycle:612  throughoutput 23435767
+cs  8 cores8:  cycle:612  throughoutput 23434978
+
+cbf  1 cores8:  cycle:612  throughoutput 23435584
+cbf  2 cores8:  cycle:612  throughoutput 23435916
+cbf  3 cores8:  cycle:612  throughoutput 23435668
+cbf  4 cores8:  cycle:612  throughoutput 23434340
+cbf  5 cores8:  cycle:612  throughoutput 23435075
+cbf  6 cores8:  cycle:612  throughoutput 23435817
+
+
+es  1 cores8:  cycle:664  throughoutput 21712865
+es  2 cores8:  cycle:1444  throughoutput 9950968
+es  3 cores8:  cycle:2219  throughoutput 6472945
+es  4 cores8:  cycle:2980  throughoutput 4820383
+es  5 cores8:  cycle:3739  throughoutput 3841631
+es  6 cores8:  cycle:4514  throughoutput 3182676
+es  7 cores8:  cycle:5247  throughoutput 2738426
+es  8 cores8:  cycle:6011  throughoutput 2389960
+cbf  1 cores8:  cycle:612  throughoutput 23434805
+cbf  2 cores8:  cycle:612  throughoutput 23435359
+cbf  3 cores8:  cycle:612  throughoutput 23435882
+cbf  4 cores8:  cycle:612  throughoutput 23434582
+cbf  5 cores8:  cycle:612  throughoutput 23435299
+cbf  6 cores8:  cycle:612  throughoutput 23435173
+cbf  7 cores8:  cycle:612  throughoutput 23434971
+cbf  8 cores8:  cycle:612  throughoutput 23435318
